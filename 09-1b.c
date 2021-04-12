@@ -7,28 +7,27 @@
 int main(int argc, char *argv[], char *envp[])
 {
   int val;
-  int    semid;        
-  char   pathname[]="09-1a.c"; 
-  key_t  key;          
+  int   semid;
+  char pathname[]="09-1a.c";
+  key_t key;
   struct sembuf mybuf;
 
   if ((key = ftok(pathname,0)) < 0) {
     printf("Can\'t generate key\n");
     exit(-1);
   }
- 
+
   if ((semid = semget(key, 1, 0666 | IPC_CREAT)) < 0) {
     printf("Can\'t create semaphore set\n");
     exit(-1);
   }
- 
+  
   mybuf.sem_num = 0;
- // Блокируем на 5 запусков программы b, так как в ней прибавляется.
-  mybuf.sem_op  = -5;
+  mybuf.sem_op  = 1;
   mybuf.sem_flg = 0;
 
   if (semop(semid, &mybuf, 1) < 0) {
-    printf("Can\'t wait for condition\n");
+    printf("Can\'t add 1 to semaphore\n");
     exit(-1);
   }
 
